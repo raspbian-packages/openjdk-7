@@ -616,6 +616,7 @@ ICEDTEA_ENV = \
 	VERBOSE="$(VERBOSE)" \
 	STATIC_CXX="false" \
 	BUILD_GCC="$(CC)" \
+	BUILD_CPP="$(CXX)" \
 	BUILD_CXX="$(CXX)" \
 	SYSTEM_CUPS="true" \
 	CUPS_LIBS="${CUPS_LIBS}" \
