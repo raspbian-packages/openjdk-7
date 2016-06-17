@@ -153,7 +153,7 @@ IT_JAVAC_SETTINGS=-g -encoding utf-8 $(JAVACFLAGS) $(MEMORY_LIMIT) $(PREFER_SOUR
 IT_JAVACFLAGS=$(IT_JAVAC_SETTINGS) -source $(IT_LANGUAGE_SOURCE_VERSION) -target $(IT_CLASS_TARGET_VERSION)
 
 # Flags
-IT_CFLAGS=$(CFLAGS) $(ARCHFLAG)
+IT_CFLAGS=$(CFLAGS) $(ARCHFLAG) $(EXTRA_CFLAGS_IT)
 
 # Conditional defintions
 
@@ -2499,7 +2499,8 @@ stamps/jamvm.stamp: $(OPENJDK_TREE) stamps/rt.stamp
 if BUILD_JAMVM
 	cd jamvm/jamvm && \
 	./autogen.sh --with-java-runtime-library=openjdk7 \
-	  --prefix=$(abs_top_builddir)/jamvm/install ; \
+	  --prefix=$(abs_top_builddir)/jamvm/install \
+	  CFLAGS='$(EXTRA_CFLAGS_JAMVM)' LDFLAGS='$(EXTRA_LDFLAGS_JAMVM)' CPPFLAGS='$(EXTRA_CPPFLAGS_JAMVM)' CXXFLAGS='$(EXTRA_CXXFLAGS_JAMVM)'; \
 	$(MAKE) ; \
 	$(MAKE) install
 	mkdir -p $(abs_top_builddir)/jamvm/install/hotspot/jre/lib/$(INSTALL_ARCH_DIR)/server
@@ -2569,7 +2570,8 @@ if !USE_SYSTEM_CACAO
 	  --with-java-runtime-library-prefix=$(abs_top_builddir)/openjdk \
 	  --with-java-runtime-library-classes=$(RUNTIME) \
 	  --with-libatomic-ops=no \
-	  --enable-jre-layout $(CACAO_CONFIGURE_ARGS); \
+	  --enable-jre-layout $(CACAO_CONFIGURE_ARGS) \ \
+	  CFLAGS='$(EXTRA_CFLAGS_CACAO)' LDFLAGS='$(EXTRA_LDFLAGS_CACAO)' CPPFLAGS='$(EXTRA_CPPFLAGS_CACAO)' CXXFLAGS='$(EXTRA_CXXFLAGS_CACAO)'; \
 	$(ARCH_PREFIX) $(MAKE) -j$(PARALLEL_JOBS) install
 	ln -sf server $(abs_top_builddir)/cacao/install/jre/lib/$(INSTALL_ARCH_DIR)/client
 	touch $(abs_top_builddir)/cacao/install/jre/lib/$(INSTALL_ARCH_DIR)/server/Xusage.txt
