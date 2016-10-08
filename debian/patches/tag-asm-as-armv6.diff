@@ -1,0 +1,21 @@
+diff -ur openjdk/hotspot/src/cpu/zero/vm/cppInterpreter_arm.S openjdk.new/hotspot/src/cpu/zero/vm/cppInterpreter_arm.S
+--- openjdk/hotspot/src/cpu/zero/vm/cppInterpreter_arm.S	2014-07-15 21:55:15.000000000 +0000
++++ openjdk.new/hotspot/src/cpu/zero/vm/cppInterpreter_arm.S	2014-07-27 22:22:50.000000000 +0000
+@@ -625,7 +625,7 @@
+ 	.arch armv4
+ 
+ #else
+-	.arch armv7-a
++	.arch armv6
+ #endif
+ 
+ #ifdef HW_FP
+@@ -5029,7 +5029,7 @@
+ 
+ 	SUB_DISPATCH_TABLES
+ 
+-	.arch	armv7-a
++	.arch	armv6
+ 
+ 	ALIGN_CODE
+ 	.global	Thumb2_stubs
