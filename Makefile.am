@@ -404,7 +404,8 @@ endif
 if BUILD_JAMVM
 ICEDTEA_PATCHES += \
 	patches/jamvm/noexecstack.patch \
-	patches/jamvm/pr2665.patch
+	patches/jamvm/pr2665.patch \
+	patches/jamvm/8158260-fix.patch
 endif
 
 if ENABLE_NSS
