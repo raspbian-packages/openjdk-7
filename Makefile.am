@@ -152,7 +152,7 @@ IT_JAVAC_SETTINGS=-g -encoding utf-8 $(JAVACFLAGS) $(MEMORY_LIMIT) $(PREFER_SOUR
 IT_JAVACFLAGS=$(IT_JAVAC_SETTINGS) -source $(IT_LANGUAGE_SOURCE_VERSION) -target $(IT_CLASS_TARGET_VERSION)
 
 # Flags
-IT_CFLAGS=$(CFLAGS) $(ARCHFLAG)
+IT_CFLAGS=$(CFLAGS) $(ARCHFLAG) $(EXTRA_CFLAGS_IT)
 
 # Conditional defintions
 
@@ -2586,7 +2586,8 @@ stamps/jamvm.stamp: $(OPENJDK_TREE) stamps/rt.stamp
 if BUILD_JAMVM
 	cd jamvm/jamvm && \
 	./autogen.sh --with-java-runtime-library=openjdk7 \
-	  --prefix=$(abs_top_builddir)/jamvm/install ; \
+	  --prefix=$(abs_top_builddir)/jamvm/install \
+	  CFLAGS='$(EXTRA_CFLAGS_JAMVM)' LDFLAGS='$(EXTRA_LDFLAGS_JAMVM)' CPPFLAGS='$(EXTRA_CPPFLAGS_JAMVM)' CXXFLAGS='$(EXTRA_CXXFLAGS_JAMVM)'; \
 	$(MAKE) ; \
 	$(MAKE) install
 	mkdir -p $(abs_top_builddir)/jamvm/install/hotspot/jre/lib/$(INSTALL_ARCH_DIR)/server
