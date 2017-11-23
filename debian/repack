@@ -1,0 +1,117 @@
+#! /bin/bash
+#
+# debian/repack
+# Part of the Debian package ‘libjs-zxcvbn’.
+# Modified by Tiago Daitx for use with the Debian package 'openjdk-7'.
+#
+# Copyright © 2013–2014 Ben Finney <ben+debian@benfinney.id.au>
+# This is free software; see the end of this file for license terms.
+
+# Convert the pristine upstream source to the Debian upstream source.
+#
+# This program is designed for use with the ‘uscan(1)’ tool, as the
+# “action” parameter for the ‘debian/watch’ configuration file.
+
+
+function usage() {
+    local progname=$(basename $0)
+    printf "$progname --upstream-version VERSION\n"
+    cat <<EOF 
+To avoid downloading tarballs on every run please set TARBALLDIR and
+use the following structure:
+  TARBALLDIR/
+    openjdk-7u121-2.6.8/       -> openjdk and jamvm tarballs
+EOF
+}
+
+set -o errexit
+set -o errtrace
+set -o pipefail
+set -o nounset
+
+set -x
+
+exec 1>&2
+
+# version 4 watch file
+# args are: --upstream-version <version>
+if [ $# -ne 2 ] ; then
+    usage
+    exit 1
+fi
+
+package_name=$(dpkg-parsechangelog --show-field=Source)
+icedtea_version="$2"
+old_orig_file=$(ls ../${package_name}_${icedtea_version}.orig.tar* | head -n1)
+old_orig_file_name="$(basename ${old_orig_file})"
+deb_orig_path="$(dirname "${old_orig_file}")"
+
+# get JDK update version
+printf "Get JDK update version from Makefile.am in upstream source ‘${old_orig_file}’:\n"
+source <(tar -O -x -f "${old_orig_file}" --wildcards "*/Makefile.am" | grep "^JDK_UPDATE_VERSION = " | tr -d ' ')
+
+# new debian version
+pkg_version=7u${JDK_UPDATE_VERSION}-${icedtea_version}
+
+# orig dir and tarball
+orig_basename="${package_name}-${pkg_version}.orig"
+openjdk_tarball="${deb_orig_path}/${package_name}_${pkg_version}.orig.tar.gz"
+
+# do not overwrite existing orig file
+if [ -e "${openjdk_tarball}" ]; then
+  printf "ERROR: OpenJDK orig file exists at '${openjdk_tarball}'. Stopping now.\n"
+  exit 1
+fi
+
+# tarball directory
+tarball_dir="${deb_orig_path}/${orig_basename}"
+
+# Unpack IcedTea
+mkdir -p "${deb_orig_path}/${orig_basename}"
+tar -xf "${old_orig_file}" -C "${deb_orig_path}/${orig_basename}" --strip-components=1
+
+# Get OpenJDK+components, unpack, and repack the whole forest
+printf "Packing OpenJDK components together\n"
+
+printf "Fetching OpenJDK modules tarballs\n"
+wget -P "${deb_orig_path}/${orig_basename}" -e robots=off -L -r -np -nd -N -A "*.tar.bz2" http://icedtea.wildebeest.org/download/drops/icedtea7/${icedtea_version}/
+
+printf "Fetching JamVM tarball\n"
+wget -P "${deb_orig_path}/${orig_basename}" -q -nd -N http://icedtea.classpath.org/download/drops/jamvm/jamvm-2.0.0.tar.gz
+
+printf "Copying IcedTea Sound tarball\n"
+cp "${deb_orig_path}"/icedtea-sound-*.tar.xz "${deb_orig_path}/${orig_basename}"
+
+# repack tarball 
+printf "Packaging IcedTea/OpenJDK/JamVM/IcedTea-Sound to '${deb_orig_path}/${orig_basename}'.\n"
+tar -caf "${openjdk_tarball}" -C "${deb_orig_path}" "${orig_basename}"
+
+printf "Done. Calling uupdate\n"
+uupdate --find --upstream-version ${pkg_version}
+
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# “Software”), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject to
+# the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+# 
+# The Software is provided “as is”, without warranty of any kind,
+# express or implied, including but not limited to the warranties of
+# merchantability, fitness for a particular purpose and noninfringement.
+# In no event shall the authors or copyright holders be liable for any
+# claim, damages or other liability, whether in an action of contract,
+# tort or otherwise, arising from, out of or in connection with the
+# Software or the use or other dealings in the Software.
+
+
+# Local variables:
+# coding: utf-8
+# mode: sh
+# indent-tabs-mode: nil
+# End:
+# vim: fileencoding=utf-8 filetype=bash :
