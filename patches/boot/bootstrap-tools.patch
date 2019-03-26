@@ -55,7 +55,7 @@ diff -Nru openjdk-boot.orig/jdk/make/common/shared/Defs-java.gmk openjdk-boot/jd
    JAVAH_CMD     = $(JAVA_TOOLS_DIR)/javah \
  		  $(JAVAHFLAGS)
 -  JAVADOC_CMD   = $(JAVA_TOOLS_DIR)/javadoc $(JAVA_TOOLS_FLAGS:%=-J%) \
--  		  $(JAVADOCFLAGS)
+-		  $(JAVADOCFLAGS)
  endif
  
  # Override of what javac to use (see deploy workspace)
