@@ -51,13 +51,39 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       INSTALL_ARCH_DIR=mips
       JRE_ARCH_DIR=mips
       SYSTEMTAP_ARCH_DIR=mips
+      ARCHFLAG="-mabi=32"
        ;;
     mipsel)
       BUILD_ARCH_DIR=mipsel
       INSTALL_ARCH_DIR=mipsel
       JRE_ARCH_DIR=mipsel
       SYSTEMTAP_ARCH_DIR=mips
+      ARCHFLAG="-mabi=32"
        ;;
+    mipsn32)
+      BUILD_ARCH_DIR=mipsn32
+      INSTALL_ARCH_DIR=mipsn32
+      JRE_ARCH_DIR=mipsn32
+      ARCHFLAG="-mabi=n32"
+      ;;
+    mipsn32el)
+      BUILD_ARCH_DIR=mipsn32el
+      INSTALL_ARCH_DIR=mipsn32el
+      JRE_ARCH_DIR=mipsn32el
+      ARCHFLAG="-mabi=n32"
+      ;;
+    mips64)
+      BUILD_ARCH_DIR=mips64
+      INSTALL_ARCH_DIR=mips64
+      JRE_ARCH_DIR=mips64
+      ARCHFLAG="-mabi=64"
+      ;;
+    mips64el)
+      BUILD_ARCH_DIR=mips64el
+      INSTALL_ARCH_DIR=mips64el
+      JRE_ARCH_DIR=mips64el
+      ARCHFLAG="-mabi=64"
+        ;;
     powerpc)
       BUILD_ARCH_DIR=ppc
       INSTALL_ARCH_DIR=ppc
