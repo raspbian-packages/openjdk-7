@@ -19,6 +19,8 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=i586
       INSTALL_ARCH_DIR=i386
       JRE_ARCH_DIR=i386
+      RPM_ARCH=i686
+      SYSTEMTAP_ARCH_DIR=i386
       ARCH_PREFIX=${LINUX32}
       ARCHFLAG="-m32"
       ;;
@@ -26,31 +28,38 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=alpha
       INSTALL_ARCH_DIR=alpha
       JRE_ARCH_DIR=alpha
-      ;;
-    arm*)
-      BUILD_ARCH_DIR=arm
-      INSTALL_ARCH_DIR=arm
-      JRE_ARCH_DIR=arm
-      ARCHFLAG="-D_LITTLE_ENDIAN"
+      SYSTEMTAP_ARCH_DIR=alpha
       ;;
     arm64|aarch64)
       BUILD_ARCH_DIR=aarch64
       INSTALL_ARCH_DIR=aarch64
       JRE_ARCH_DIR=aarch64
+      RPM_ARCH=aarch64
+      SYSTEMTAP_ARCH_DIR=arm64
+      ARCHFLAG="-D_LITTLE_ENDIAN"
+      ;;
+    arm*)
+      BUILD_ARCH_DIR=arm
+      INSTALL_ARCH_DIR=arm
+      JRE_ARCH_DIR=arm
+      RPM_ARCH=armv7hl
+      SYSTEMTAP_ARCH_DIR=arm
       ARCHFLAG="-D_LITTLE_ENDIAN"
       ;;
     mips)
       BUILD_ARCH_DIR=mips
       INSTALL_ARCH_DIR=mips
       JRE_ARCH_DIR=mips
+      SYSTEMTAP_ARCH_DIR=mips
       ARCHFLAG="-mabi=32"
-      ;;
+       ;;
     mipsel)
       BUILD_ARCH_DIR=mipsel
       INSTALL_ARCH_DIR=mipsel
       JRE_ARCH_DIR=mipsel
+      SYSTEMTAP_ARCH_DIR=mips
       ARCHFLAG="-mabi=32"
-      ;;
+       ;;
     mipsn32)
       BUILD_ARCH_DIR=mipsn32
       INSTALL_ARCH_DIR=mipsn32
@@ -79,6 +88,8 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=ppc
       INSTALL_ARCH_DIR=ppc
       JRE_ARCH_DIR=ppc
+      RPM_ARCH=ppc
+      SYSTEMTAP_ARCH_DIR=powerpc
       ARCH_PREFIX=${LINUX32}
       ARCHFLAG="-m32"
       ;;
@@ -86,19 +97,23 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=ppc64
       INSTALL_ARCH_DIR=ppc64
       JRE_ARCH_DIR=ppc64
+      RPM_ARCH=ppc64
+      SYSTEMTAP_ARCH_DIR=powerpc
       ARCHFLAG="-m64"
        ;;
     powerpc64le)
       BUILD_ARCH_DIR=ppc64le
       INSTALL_ARCH_DIR=ppc64le
       JRE_ARCH_DIR=ppc64le
+      RPM_ARCH=ppc64le
+      SYSTEMTAP_ARCH_DIR=powerpc
       ARCHFLAG="-m64"
        ;;
     sparc)
       BUILD_ARCH_DIR=sparc
       INSTALL_ARCH_DIR=sparc
       JRE_ARCH_DIR=sparc
-      CROSS_TARGET_ARCH=sparc
+      SYSTEMTAP_ARCH_DIR=sparc
       ARCH_PREFIX=${LINUX32}
       ARCHFLAG="-m32"
        ;;
@@ -106,12 +121,15 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=sparcv9
       INSTALL_ARCH_DIR=sparcv9
       JRE_ARCH_DIR=sparc64
+      SYSTEMTAP_ARCH_DIR=sparc
       ARCHFLAG="-m64"
        ;;
     s390)
       BUILD_ARCH_DIR=s390
       INSTALL_ARCH_DIR=s390
       JRE_ARCH_DIR=s390
+      RPM_ARCH=s390
+      SYSTEMTAP_ARCH_DIR=s390
       ARCH_PREFIX=${LINUX32}
       ARCHFLAG="-m31"
        ;;
@@ -119,24 +137,27 @@ AC_DEFUN([IT_SET_ARCH_SETTINGS],
       BUILD_ARCH_DIR=s390x
       INSTALL_ARCH_DIR=s390x
       JRE_ARCH_DIR=s390x
-      CROSS_TARGET_ARCH=s390x
+      RPM_ARCH=s390x
+      SYSTEMTAP_ARCH_DIR=s390
       ARCHFLAG="-m64"
       ;;
     sh*)
       BUILD_ARCH_DIR=sh
       INSTALL_ARCH_DIR=sh
       JRE_ARCH_DIR=sh
-      CROSS_TARGET_ARCH=sh
+      SYSTEMTAP_ARCH_DIR=sh
       ;;
     *)
       BUILD_ARCH_DIR=`uname -m`
       INSTALL_ARCH_DIR=$BUILD_ARCH_DIR
       JRE_ARCH_DIR=$INSTALL_ARCH_DIR
+      SYSTEMTAP_ARCH_DIR=$INSTALL_ARCH_DIR
       ;;
   esac
   AC_SUBST(BUILD_ARCH_DIR)
   AC_SUBST(INSTALL_ARCH_DIR)
   AC_SUBST(JRE_ARCH_DIR)
+  AC_SUBST(SYSTEMTAP_ARCH_DIR)
   AC_SUBST(ARCH_PREFIX)
   AC_SUBST(ARCHFLAG)
 ])
@@ -1182,6 +1203,7 @@ AC_DEFUN([IT_CHECK_IF_BOOTSTRAPPING],
 
 AC_DEFUN_ONCE([IT_CHECK_FOR_JDK],
 [
+  AC_REQUIRE([IT_SET_ARCH_SETTINGS])
   AC_MSG_CHECKING([for a JDK home directory])
   AC_ARG_WITH([jdk-home],
 	      [AS_HELP_STRING([--with-jdk-home[[=PATH]]],
@@ -1206,10 +1228,10 @@ AC_DEFUN_ONCE([IT_CHECK_FOR_JDK],
       BOOTSTRAP_VMS="/usr/lib/jvm/java-gcj /usr/lib/jvm/gcj-jdk /usr/lib/jvm/cacao";
     fi
     ICEDTEA6_VMS="/usr/lib/jvm/icedtea-6 /usr/lib/jvm/icedtea6 /usr/lib/jvm/java-6-openjdk
-    		  /usr/lib/jvm/java-1.6.0-openjdk /usr/lib/jvm/java-1.6.0-openjdk.x86_64
+    		  /usr/lib/jvm/java-1.6.0-openjdk /usr/lib/jvm/java-1.6.0-openjdk.${RPM_ARCH}
 		  /usr/lib64/jvm/java-1.6.0-openjdk /usr/lib/jvm/java-1.6.0"
     ICEDTEA7_VMS="/usr/lib/jvm/icedtea-7 /usr/lib/jvm/icedtea7 /usr/lib/jvm/java-7-openjdk
-                  /usr/lib/jvm/java-1.7.0-openjdk /usr/lib/jvm/java-1.7.0-openjdk.x86_64
+                  /usr/lib/jvm/java-1.7.0-openjdk /usr/lib/jvm/java-1.7.0-openjdk.${RPM_ARCH}
 		  /usr/lib64/jvm/java-1.7.0-openjdk /usr/lib/jvm/java-1.7.0"
     for dir in ${BOOTSTRAP_VMS} ${ICEDTEA7_VMS} ${ICEDTEA6_VMS} \
     	       /usr/lib/jvm/java-openjdk /usr/lib/jvm/openjdk /usr/lib/jvm/java-icedtea \
@@ -1499,33 +1521,29 @@ AC_DEFUN([IT_CHECK_ENABLE_WARNINGS],
 
 AC_DEFUN([IT_WITH_TZDATA_DIR],
 [
-  DEFAULT="/usr/share/javazi"
+  TZDATA_DEFAULT="${datadir}/javazi"
   AC_MSG_CHECKING([which Java timezone data directory to use])
   AC_ARG_WITH([tzdata-dir],
-	      [AS_HELP_STRING([--with-tzdata-dir[[=DIR]]],set the Java timezone data directory [[DIR=/usr/share/javazi]])],
+	      [AS_HELP_STRING([--with-tzdata-dir[[=DIR]]],set the Java timezone data directory [[default=DATAROOTDIR/javazi]])],
   [
     if test "x${withval}" = x || test "x${withval}" = xyes; then
-      TZDATA_DIR_SET=yes
-      TZDATA_DIR="${DEFAULT}"
+      TZDATA_DIR="${TZDATA_DEFAULT}"
     else
-      if test "x${withval}" = xno; then
-        TZDATA_DIR_SET=no
-        AC_MSG_RESULT([no])
-      else
-        TZDATA_DIR_SET=yes
-        TZDATA_DIR="${withval}"
-      fi
+      TZDATA_DIR="${withval}"
     fi
   ],
   [ 
-    TZDATA_DIR="${DEFAULT}"
+    TZDATA_DIR="${TZDATA_DEFAULT}"
   ])
-  if test "x${TZDATA_DIR}" != "x"; then
-    AC_MSG_RESULT([${TZDATA_DIR}])
+  if test "x${TZDATA_DIR}" = "xno"; then
+    TZDATA_DIR=none
+    TZDATA_DIR_SET=no
+  else
+    TZDATA_DIR_SET=yes
   fi
+  AC_MSG_RESULT([${TZDATA_DIR}])
   AC_SUBST([TZDATA_DIR])
-  AM_CONDITIONAL(WITH_TZDATA_DIR, test "x${TZDATA_DIR}" != "x")
-  AC_CONFIG_FILES([tz.properties])
+  AM_CONDITIONAL(WITH_TZDATA_DIR, test "x${TZDATA_DIR_SET}" = "xyes")
 ])
 
 dnl check that javac and java work
@@ -1831,7 +1849,7 @@ AC_CONFIG_FILES([nss.cfg])
 
 AC_DEFUN([IT_DIAMOND_CHECK],[
   AC_REQUIRE([IT_CHECK_JAVA_AND_JAVAC_WORK])
-  AC_CACHE_CHECK([if javac lacks support for the diamond operator], it_cv_diamond, [
+  AC_CACHE_CHECK([if the Java compiler lacks support for the diamond operator], it_cv_diamond, [
   CLASS=Test.java
   BYTECODE=$(echo $CLASS|sed 's#\.java##')
   mkdir tmp.$$
@@ -2916,6 +2934,33 @@ AC_DEFUN_ONCE([IT_ENABLE_IMPROVED_FONT_RENDERING],
   fi
 ])
 
+AC_DEFUN([IT_WITH_TAPSET_DIR],
+[
+  TAPSET_DEFAULT="${datadir}/systemtap/tapset"
+  AC_MSG_CHECKING([which SystemTap tapset directory to use])
+  AC_ARG_WITH([tapset-dir],
+	      [AS_HELP_STRING(--with-tapset-dir,set the SystemTap tapset directory [[default=DATAROOTDIR/systemtap/tapset]])],
+  [
+    if test "x${withval}" = x || test "x${withval}" = xyes; then
+      TAPSET_DIR="${TAPSET_DEFAULT}"
+    else
+      TAPSET_DIR="${withval}"
+    fi
+  ],
+  [
+    TAPSET_DIR="${TAPSET_DEFAULT}"
+  ])
+  if test "x${TAPSET_DIR}" = "xno"; then
+    TAPSET_DIR=none
+    TAPSET_DIR_SET=no
+  else
+    TAPSET_DIR_SET=yes
+  fi
+  AC_MSG_RESULT([${TAPSET_DIR}])
+  AC_SUBST([TAPSET_DIR])
+  AM_CONDITIONAL(WITH_TAPSET_DIR, test "x${TAPSET_DIR_SET}" = "xyes")
+])
+
 AC_DEFUN_ONCE([IT_HAS_NATIVE_HOTSPOT_PORT],
 [
   AC_MSG_CHECKING([if a native HotSpot port is available for this architecture])
@@ -2937,10 +2982,20 @@ AC_DEFUN_ONCE([IT_DETERMINE_VERSION],
 [
   AC_MSG_CHECKING([which branch and release of IcedTea is being built])
   JAVA_VER=1.7.0
+  JAVA_VENDOR=openjdk
+  JDK_UPDATE_VERSION=201
+  BUILD_VERSION=b00
+  COMBINED_VERSION=${JDK_UPDATE_VERSION}-${BUILD_VERSION}
+  OPENJDK_VER=${JAVA_VER}_${COMBINED_VERSION}
   ICEDTEA_RELEASE=$(echo ${PACKAGE_VERSION} | sed 's#pre.*##')
   ICEDTEA_BRANCH=$(echo ${ICEDTEA_RELEASE}|sed 's|\.[[0-9]]$||')
-  AC_MSG_RESULT([branch ${ICEDTEA_BRANCH}, release ${ICEDTEA_RELEASE} for OpenJDK ${JAVA_VER}])
+  AC_MSG_RESULT([branch ${ICEDTEA_BRANCH}, release ${ICEDTEA_RELEASE} for OpenJDK ${OPENJDK_VER}])
   AC_SUBST([JAVA_VER])
+  AC_SUBST([JAVA_VENDOR])
+  AC_SUBST([JDK_UPDATE_VERSION])
+  AC_SUBST([BUILD_VERSION])
+  AC_SUBST([COMBINED_VERSION])
+  AC_SUBST([OPENJDK_VER])
   AC_SUBST([ICEDTEA_RELEASE])
   AC_SUBST([ICEDTEA_BRANCH])
 ])
@@ -3016,7 +3071,7 @@ AC_PROVIDE([$0])dnl
 
 AC_DEFUN([IT_UNDERSCORE_CHECK],[
   AC_REQUIRE([IT_CHECK_JAVA_AND_JAVAC_WORK])
-  AC_CACHE_CHECK([if javac lacks support for underscored literals], it_cv_underscore, [
+  AC_CACHE_CHECK([if the Java compiler lacks support for underscored literals], it_cv_underscore, [
   CLASS=Test.java
   BYTECODE=$(echo $CLASS|sed 's#\.java##')
   mkdir tmp.$$
@@ -3473,4 +3528,66 @@ AC_DEFUN_ONCE([IT_DISABLE_SYSTEMTAP_TESTS],
   ])
   AC_MSG_RESULT([$disable_systemtap_tests])
   AM_CONDITIONAL([DISABLE_SYSTEMTAP_TESTS], test x"${disable_systemtap_tests}" = "xyes")
+])
+
+AC_DEFUN_ONCE([IT_JAVAC_OPTIONS_CHECK],
+[
+  AC_REQUIRE([IT_CHECK_JAVA_AND_JAVAC_WORK])
+  AC_CACHE_CHECK([if the Java compiler supports -Xprefer:source], it_cv_xprefersource_works, [
+  CLASS=Test.java
+  BYTECODE=$(echo $CLASS|sed 's#\.java##')
+  mkdir tmp.$$
+  cd tmp.$$
+  cat << \EOF > $CLASS
+[/* [#]line __oline__ "configure" */
+
+public class Test
+{
+    public static void main(String[] args)
+    {
+      System.out.println("Hello World!");
+    }
+}]
+EOF
+  mkdir build
+  if $JAVAC -d build -cp . $JAVACFLAGS -Xprefer:source $CLASS >&AS_MESSAGE_LOG_FD 2>&1; then
+    it_cv_xprefersource_works=yes;
+  else
+    it_cv_xprefersource_works=no;
+  fi
+  rm -f $CLASS build/*.class
+  rmdir build
+  cd ..
+  rmdir tmp.$$
+  ])
+  AC_CACHE_CHECK([if the Java compiler supports setting the maximum heap size], it_cv_max_heap_size_works, [
+  CLASS=Test.java
+  BYTECODE=$(echo $CLASS|sed 's#\.java##')
+  mkdir tmp.$$
+  cd tmp.$$
+  cat << \EOF > $CLASS
+[/* [#]line __oline__ "configure" */
+
+public class Test
+{
+    public static void main(String[] args)
+    {
+      System.out.println("Hello World!");
+    }
+}]
+EOF
+  mkdir build
+  if $JAVAC -d build -cp . $JAVACFLAGS -J-Xmx1024m $CLASS >&AS_MESSAGE_LOG_FD 2>&1; then
+    it_cv_max_heap_size_works=yes;
+  else
+    it_cv_max_heap_size_works=no;
+  fi
+  rm -f $CLASS build/*.class
+  rmdir build
+  cd ..
+  rmdir tmp.$$
+  ])
+  AC_PROVIDE([$0])dnl
+  AM_CONDITIONAL([COMPILER_SUPPORTS_XPREFERSOURCE], test x"${it_cv_xprefersource_works}" = "xyes")
+  AM_CONDITIONAL([COMPILER_SUPPORTS_MAX_HEAP_SIZE], test x"${it_cv_max_heap_size_works}" = "xyes")
 ])
