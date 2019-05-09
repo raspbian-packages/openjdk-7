@@ -22,8 +22,8 @@ CACAO_BASE_URL = $(DROP_URL)/cacao
 CACAO_SRC_ZIP = cacao-$(CACAO_VERSION).tar.gz
 CACAO_URL = $(CACAO_BASE_URL)/$(CACAO_SRC_ZIP)
 
-JAMVM_VERSION = ec18fb9e49e62dce16c5094ef1527eed619463aa
-JAMVM_SHA256SUM = 31810266666c23822942aac62a78019c2c4589e1c5ee48329cbf42652d4437bc
+JAMVM_VERSION = 2.0.0
+JAMVM_SHA256SUM = 76428e96df0ae9dd964c7a7c74c1e9a837e2f312c39e9a357fa8178f7eff80da
 JAMVM_BASE_URL = $(DROP_URL)/jamvm
 JAMVM_URL = $(JAMVM_BASE_URL)/jamvm-$(JAMVM_VERSION).tar.gz
 JAMVM_SRC_ZIP = jamvm-$(JAMVM_VERSION).tar.gz
@@ -401,8 +401,6 @@ endif
 
 if BUILD_JAMVM
 ICEDTEA_PATCHES += \
-	patches/jamvm/find_class_from_caller.patch \
-	patches/jamvm/pr2172-tempdir.patch \
 	patches/jamvm/noexecstack.patch \
 	patches/jamvm/pr2665.patch \
 	patches/jamvm/pr3134-unsafe_methods.patch
@@ -414,6 +412,11 @@ endif
 
 if !USE_NON_NSS_CURVES
 ICEDTEA_PATCHES += patches/rh1022017.patch
+endif
+
+if BUILD_JAMVM
+ICEDTEA_PATCHES += \
+	patches/jamvm-2.5.3-fix.diff
 endif
 
 ICEDTEA_PATCHES += $(DISTRIBUTION_PATCHES)
@@ -2449,7 +2452,7 @@ clean-rewrite-rhino:
 stamps/jamvm.stamp: $(OPENJDK_TREE) stamps/rt.stamp
 if BUILD_JAMVM
 	cd jamvm/jamvm && \
-	./autogen.sh --with-java-runtime-library=openjdk7 \
+	./configure --with-java-runtime-library=openjdk7 \
 	  --prefix=$(abs_top_builddir)/jamvm/install \
 	  CFLAGS='$(EXTRA_CFLAGS_JAMVM)' LDFLAGS='$(EXTRA_LDFLAGS_JAMVM)' CPPFLAGS='$(EXTRA_CPPFLAGS_JAMVM)' CXXFLAGS='$(EXTRA_CXXFLAGS_JAMVM)'; \
 	$(MAKE) ; \
