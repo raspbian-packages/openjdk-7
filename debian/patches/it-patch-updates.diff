@@ -1,0 +1,15 @@
+Description: IcedTea patch updates (regenerate patches)
+Author: Matthias Klose <doko@ubuntu.com>
+Last-Update: 2018-06-04
+
+--- a/patches/boot/bootstrap-tools.patch
++++ b/patches/boot/bootstrap-tools.patch
+@@ -60,7 +62,7 @@
+    JAVAH_CMD     = $(JAVA_TOOLS_DIR)/javah \
+  		  $(JAVAHFLAGS)
+ -  JAVADOC_CMD   = $(JAVA_TOOLS_DIR)/javadoc $(JAVA_TOOLS_FLAGS:%=-J%) \
+--  		  $(JAVADOCFLAGS)
++-		  $(JAVADOCFLAGS)
+  endif
+  
+  # Override of what javac to use (see deploy workspace)
