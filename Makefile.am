@@ -447,7 +447,8 @@ ICEDTEA_BOOT_PATCHES = \
 	patches/boot/ecj-trywithresources.patch \
 	patches/boot/ecj-autoboxing.patch \
 	patches/boot/xsltproc.patch \
-	patches/boot/ecj-odd.patch
+	patches/boot/ecj-odd.patch \
+	patches/boot/ecj-diamond.patch
 
 if !DISABLE_BOOTSTRAP_TOOLS
 ICEDTEA_BOOT_PATCHES += \
