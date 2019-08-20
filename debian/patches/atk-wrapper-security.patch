@@ -1,0 +1,12 @@
+Index: openjdk/jdk/src/share/lib/security/java.security-linux
+===================================================================
+--- openjdk/jdk/src/share/lib/security/java.security-linux
++++ openjdk/jdk/src/share/lib/security/java.security-linux
+@@ -137,6 +137,7 @@ keystore.type.compat=true
+ # corresponding RuntimePermission ("accessClassInPackage."+package) has
+ # been granted.
+ package.access=sun.,\
++               org.GNOME.Accessibility.,\
+                com.sun.xml.internal.,\
+                com.sun.imageio.,\
+                com.sun.istack.internal.,\
