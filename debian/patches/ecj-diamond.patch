@@ -1,0 +1,20 @@
+From: Markus Koschany <apo@debian.org>
+Date: Wed, 14 Aug 2019 15:02:49 +0200
+Subject: ecj-diamond
+
+---
+ Makefile.am | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -447,7 +447,8 @@ ICEDTEA_BOOT_PATCHES = \
+ 	patches/boot/ecj-trywithresources.patch \
+ 	patches/boot/ecj-autoboxing.patch \
+ 	patches/boot/xsltproc.patch \
+-	patches/boot/ecj-odd.patch
++	patches/boot/ecj-odd.patch \
++	patches/boot/ecj-diamond.patch
+ 
+ if !DISABLE_BOOTSTRAP_TOOLS
+ ICEDTEA_BOOT_PATCHES += \
